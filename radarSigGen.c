@@ -3,10 +3,15 @@
 #include <math.h>
 #include <time.h>
 
-#define PI 3.14159265358979323846
+#define PI 3.14159
 
 // A Single Radar Pulse
 void generate_pulse(double *signal, int signal_length, double amplitude, double frequency, double phase) {
+    // signal -> list of doubles where the signal will be sotred over its indexes representing different times.
+    // signal_length -> the count of signals over time.
+    // amplitude -> in real systems this is the voltage
+    // frequency -> in Hz
+    // phase -> starting point of sin wave (0-2pi)
     for (int i = 0; i < signal_length; i++) {
         signal[i] = amplitude * sin(2 * PI * frequency * i / signal_length + phase);
     }
@@ -17,7 +22,7 @@ void add_target_reflections(double *signal, int signal_length, int num_targets) 
     srand(time(NULL));
     for (int i = 0; i < num_targets; i++) {
         int delay = rand() % signal_length;
-        double amplitude = 0.1 + (rand() % 10) / 10.0; // Random amplitude between 0.1 and 1.0
+        double amplitude = 0.1 + (rand() % 10) / 10.0;
         for (int j = delay; j < signal_length; j++) {
             signal[j] += amplitude * signal[j - delay];
         }
@@ -36,16 +41,25 @@ double generate_gaussian_noise(double mean, double stddev) {
     } while (w >= 1.0 || w == 0.0);
 
     w = sqrt(-2.0 * log(w) / w);
-    
-    
+    return mean + stddev * u * w; 
 }
 
 double calculate_signal_power(double *signal, int signal_length) {
     // Calculate average power of the signal
-    // ...
+    // https://electronics.stackexchange.com/questions/154143/calculating-the-power-of-a-signal
+    // https://en.wikipedia.org/wiki/Signal-to-noise_ratio
+    double signal_power = 0.0;
+
+    for (int i = 0; i < signal_length; i++) {
+        double current_signal = signal[i];
+        signal_power += current_signal * current_signal;
+    }
+
+    return signal_power / signal_length;
 }
 
 void add_noise(double *signal, int signal_length, double snr_db) {
+    // snr_db is in decibels (dB)
     double signal_power = calculate_signal_power(signal, signal_length);
 
     // Calc SNR
@@ -64,14 +78,17 @@ int main() {
     int signal_length = 1000;
     double *signal = (double *)malloc(signal_length * sizeof(double));
     
-    // Generate initial pulse
+    
     generate_pulse(signal, signal_length, 1.0, 10.0, 0.0);
     
-    // Add target reflections
+    
     add_target_reflections(signal, signal_length, 3);
     
-    // Print the first 20 samples of the signal
-    printf("First 20 samples of the generated signal:\n");
+    
+    add_noise(signal, signal_length, 10.0);
+    
+    
+    printf("First 20 samples of the generated signal with noise:\n");
     for (int i = 0; i < 20; i++) {
         printf("%f ", signal[i]);
     }
@@ -80,3 +97,8 @@ int main() {
     free(signal);
     return 0;
 }
+
+
+// Sources used to research
+// https://www.mathworks.com/discovery/how-do-radars-work.html#:~:text=Radar%20either%20uses%20its%20own,a%20change%20in%20the%20environment.
+// https://www.reddit.com/r/ElectricalEngineering/comments/9jyuba/im_trying_to_understand_the_math_behind_radar/
