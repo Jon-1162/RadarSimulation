@@ -9,3 +9,10 @@ This will need to include signal generation , noise filtering, and object detect
 3. Object Detection Using Fast Fourier Transform
 
 4. Visualization
+
+To make the c file into a function callable in python use the following steps:
+Windows:
+gcc -shared -o radarSigGen.dll radarSigGen.c
+
+Mac/Linux:
+gcc -shared -o radarSigGen.so -fPIC radarSigGen.c
