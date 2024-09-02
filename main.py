@@ -89,9 +89,6 @@ def run_simulation(num_iterations=1):  # Reduced iterations for demonstration
         # signal_plotting(time_series_signal)
         # signal_plotting(windowed_sig)
         
-
-
-
         fs = 1e6  # 1 MHz
         lowcut = .5  # 1 kHz
         highcut = 10000  # 10 kHz
@@ -100,8 +97,7 @@ def run_simulation(num_iterations=1):  # Reduced iterations for demonstration
         
         peaks, _ = peak_detection(np.abs(post_fft_sig))
         threshold_value = np.mean(np.abs(post_fft_sig)) + 2 * np.std(np.abs(post_fft_sig))
-        print("threshold_values------------------")
-        print(threshold_value)
+
         detected_objects = thresh_detect(peaks, threshold_value)
         
 
