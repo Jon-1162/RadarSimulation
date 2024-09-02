@@ -22,7 +22,7 @@ void add_target_reflections(double *signal, int signal_length, int num_targets) 
     srand(time(NULL));
     for (int i = 0; i < num_targets; i++) {
         int delay = rand() % signal_length;
-        double amplitude = 0.1 + (rand() % 10) / 10.0;
+        double amplitude = 1 + (rand() % 10) / 10.0;
         for (int j = delay; j < signal_length; j++) {
             signal[j] += amplitude * signal[j - delay];
         }
@@ -72,31 +72,20 @@ void add_noise(double *signal, int signal_length, double snr_db) {
     }
 }
 
-
-
-int main() {
-    int signal_length = 1000;
-    double *signal = (double *)malloc(signal_length * sizeof(double));
+double* generate_radar_signal(int signal_length, double amplitude, double frequency, double phase, int num_targets, double snr_db) {
+    double* signal = (double*)malloc(signal_length * sizeof(double));
     
+    generate_pulse(signal, signal_length, amplitude, frequency, phase);
+    add_target_reflections(signal, signal_length, num_targets);
+    add_noise(signal, signal_length, snr_db);
     
-    generate_pulse(signal, signal_length, 1.0, 10.0, 0.0);
-    
-    
-    add_target_reflections(signal, signal_length, 3);
-    
-    
-    add_noise(signal, signal_length, 10.0);
-    
-    
-    printf("First 20 samples of the generated signal with noise:\n");
-    for (int i = 0; i < 20; i++) {
-        printf("%f ", signal[i]);
-    }
-    printf("\n");
-    
-    free(signal);
-    return 0;
+    return signal;
 }
+
+void free_radar_signal(double* signal) {
+    free(signal);
+}
+
 
 
 // Sources used to research
