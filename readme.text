@@ -1,9 +1,11 @@
 Radar Signal Processing Simulation - - - - - - - - - - - - 
-The goal of this project is to simulate a radars system signal processing pipeline to model how radars detect objects. 
+The goal of this project is to learn and simulate a 1 dimensional radars system signal processing pipeline to model how radars detect objects. 
 This will need to include signal generation , noise filtering, and object detection using Fast Fourier Transform.
 
-1. Signal Generation
+1. Signal Generation+ Adding Noise
 
 2. Noise Filtering
 
 3. Object Detection Using Fast Fourier Transform
+
+4. Visualization
